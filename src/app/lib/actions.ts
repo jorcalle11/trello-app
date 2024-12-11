@@ -18,3 +18,16 @@ export async function createBoard(formData: FormData) {
 
   revalidatePath("/boards");
 }
+
+export async function createList(boardId: string, formData: FormData) {
+  const title = formData.get("title") as string;
+
+  try {
+    await sql`INSERT INTO lists (title, board_id) VALUES (${title}, ${boardId})`;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create list");
+  }
+
+  revalidatePath(`/boards/${boardId}`);
+}

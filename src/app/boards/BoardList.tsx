@@ -11,7 +11,7 @@ export async function BoardList() {
       <h1 className="text-3xl font-bold mb-6">My Trello Boards</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         {boards.map((board) => (
-          <Link href={`/board/${board.id}`} key={board.id} className="block">
+          <Link href={`/boards/${board.id}`} key={board.id} className="block">
             <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow h-32 flex flex-col justify-between">
               <h2 className="text-xl font-semibold">{board.title}</h2>
               <div
