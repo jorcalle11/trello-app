@@ -1,6 +1,7 @@
 import { fetchCards } from "../lib/data";
 import { Card } from "./Card";
-import DeleteListIcon from "./DeleteList";
+import CreateCardForm from "./CreateCardForm";
+import DeleteListIcon from "./DeleteListIcon";
 
 export async function List({ id, title }: { id: string; title: string }) {
   const cards = await fetchCards(id);
@@ -13,10 +14,12 @@ export async function List({ id, title }: { id: string; title: string }) {
       </div>
       <div className="space-y-2">
         {cards.map((card) => (
-          <Card key={card.id} title={card.title} />
+          <Card key={card.id} id={card.id} title={card.title} />
         ))}
       </div>
-      {/* <AddCard listId={list.id} /> */}
+      <div className="mt-4">
+        <CreateCardForm listId={id} />
+      </div>
     </div>
   );
 }

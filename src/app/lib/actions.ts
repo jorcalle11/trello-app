@@ -38,8 +38,6 @@ export async function createList(
 }
 
 export async function deleteList(id: string) {
-  // delete all cards in the list
-  // delete the list itself
   try {
     await sql`BEGIN`;
     await sql`DELETE FROM cards WHERE list_id = ${id}`;
@@ -49,6 +47,34 @@ export async function deleteList(id: string) {
     console.error(error);
     await sql`ROLLBACK`;
     throw new Error("Failed to delete list");
+  }
+
+  revalidatePath("/boards");
+}
+
+export async function createCard(prevState: string, formData: FormData) {
+  const title = formData.get("title") as string;
+  const listId = formData.get("listId") as string;
+
+  try {
+    await sql`INSERT INTO cards (title, list_id) VALUES (${title}, ${listId})`;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create card");
+  }
+
+  revalidatePath(`/boards/${listId}`);
+  return "card created";
+}
+
+export async function deleteCard(id: string) {
+  console.log("deleteCard", id);
+
+  try {
+    await sql`DELETE FROM cards WHERE id = ${id}`;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to delete card");
   }
 
   revalidatePath("/boards");
