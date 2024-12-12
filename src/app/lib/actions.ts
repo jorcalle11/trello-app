@@ -19,7 +19,11 @@ export async function createBoard(formData: FormData) {
   revalidatePath("/boards");
 }
 
-export async function createList(boardId: string, formData: FormData) {
+export async function createList(
+  boardId: string,
+  prevState: string,
+  formData: FormData
+) {
   const title = formData.get("title") as string;
 
   try {
@@ -30,4 +34,22 @@ export async function createList(boardId: string, formData: FormData) {
   }
 
   revalidatePath(`/boards/${boardId}`);
+  return "board created";
+}
+
+export async function deleteList(id: string) {
+  // delete all cards in the list
+  // delete the list itself
+  try {
+    await sql`BEGIN`;
+    await sql`DELETE FROM cards WHERE list_id = ${id}`;
+    await sql`DELETE FROM lists WHERE id = ${id}`;
+    await sql`COMMIT`;
+  } catch (error) {
+    console.error(error);
+    await sql`ROLLBACK`;
+    throw new Error("Failed to delete list");
+  }
+
+  revalidatePath("/boards");
 }
