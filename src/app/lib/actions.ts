@@ -79,3 +79,19 @@ export async function deleteCard(id: string) {
 
   revalidatePath("/boards");
 }
+
+export async function deleteBoard(id: string) {
+  try {
+    await sql`BEGIN`;
+    await sql`DELETE FROM cards WHERE list_id IN (SELECT id FROM lists WHERE board_id = ${id})`;
+    await sql`DELETE FROM lists WHERE board_id = ${id}`;
+    await sql`DELETE FROM boards WHERE id = ${id}`;
+    await sql`COMMIT`;
+  } catch (error) {
+    console.error(error);
+    await sql`ROLLBACK`;
+    throw new Error("Failed to delete board");
+  }
+
+  revalidatePath("/boards");
+}
